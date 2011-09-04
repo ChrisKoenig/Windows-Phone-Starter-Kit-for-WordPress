@@ -1,0 +1,303 @@
+﻿<phone:PhoneApplicationPage x:Class="WordPressStarterKit.MainPage"
+                            xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                            xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                            xmlns:phone="clr-namespace:Microsoft.Phone.Controls;assembly=Microsoft.Phone"
+                            xmlns:shell="clr-namespace:Microsoft.Phone.Shell;assembly=Microsoft.Phone"
+                            xmlns:controls="clr-namespace:Microsoft.Phone.Controls;assembly=Microsoft.Phone.Controls"
+                            xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+                            xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+                            xmlns:toolkit="clr-namespace:Microsoft.Phone.Controls;assembly=Microsoft.Phone.Controls.Toolkit"
+                            xmlns:local="clr-namespace:WordPressStarterKit.Controls"
+                            mc:Ignorable="d"
+                            FontFamily="{StaticResource PhoneFontFamilyNormal}"
+                            FontSize="{StaticResource PhoneFontSizeNormal}"
+                            Foreground="{StaticResource PhoneForegroundBrush}"
+                            SupportedOrientations="Portrait"
+                            Orientation="Portrait"
+                            d:DesignWidth="480"
+                            d:DesignHeight="800"
+                            shell:SystemTray.IsVisible="False">
+
+    <!--LayoutRoot is the root grid where all page content is placed-->
+    <Grid x:Name="LayoutRoot"
+          Background="Transparent">
+
+        <!--Panorama control-->
+        <controls:Panorama Name="panorama"
+                           Background="{StaticResource PanoramaBackgroundImage}"
+                           Title="{StaticResource BlogTitle}">
+
+            <controls:PanoramaItem Header="home"
+                                   Margin="0, -15, 0, 0">
+                <ListBox Name="homeList"
+                         Width="412"
+                         Height="500"
+                         Grid.Row="0"
+                         Margin="12, -15, -12, 0"
+                         MouseLeftButtonUp="homeList_MouseLeftButtonUp"
+                         VerticalAlignment="Top">
+                    <ListBox.ItemTemplate>
+                        <DataTemplate>
+                            <Grid>
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="Auto" />
+                                    <RowDefinition Height="Auto" />
+                                    <RowDefinition Height="Auto" />
+                                    <RowDefinition Height="Auto" />
+                                </Grid.RowDefinitions>
+                                <TextBlock TextWrapping="NoWrap"
+                                           Text="{Binding Title}"
+                                           Grid.Row="0"
+                                           FontSize="42"
+                                           HorizontalAlignment="Left" />
+                                <TextBlock TextWrapping="Wrap"
+                                           Text="{Binding subTitle}"
+                                           Grid.Row="1"
+                                           FontSize="18"
+                                           HorizontalAlignment="Left" />
+                                <TextBlock TextWrapping="Wrap"
+                                           Text=""
+                                           Grid.Row="1"
+                                           FontSize="18"
+                                           HorizontalAlignment="Left" />
+                            </Grid>
+                        </DataTemplate>
+                    </ListBox.ItemTemplate>
+                </ListBox>
+
+            </controls:PanoramaItem>
+
+            <controls:PanoramaItem Header="categories"
+                                   Margin="0, -15, 0, 0">
+                <controls:PanoramaItem.HeaderTemplate>
+                    <DataTemplate>
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition />
+                                <ColumnDefinition Width="Auto" />
+                            </Grid.ColumnDefinitions>
+                            <TextBlock Grid.Column="0"
+                                       Height="100"
+                                       Text="categories"
+                                       Margin="0,0,0,0" />
+                            <local:LightDarkImageButton Grid.Column="1"
+                                                        Margin="25,0,0,0"
+                                                        Width="48"
+                                                        Height="48"
+                                                        Click="cat_refresh"
+                                                        LightImagePath="/images/light/appbar.sync.rest.png"
+                                                        DarkImagePath="/images/dark/appbar.sync.rest.png" />
+                        </Grid>
+                    </DataTemplate>
+                </controls:PanoramaItem.HeaderTemplate>
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="20" />
+                    </Grid.RowDefinitions>
+                    <Grid x:Name="ContentPanel2"
+                          Grid.Row="0"
+                          Margin="12,12,12,0">
+                        <toolkit:PerformanceProgressBar x:Name="performanceProgressBar2"
+                                                        IsIndeterminate="True" />
+                    </Grid>
+
+                    <ListBox Name="catList"
+                             Width="390"
+                             Height="500"
+                             SelectionChanged="Cat_SelectionChanged"
+                             VerticalAlignment="Top"
+                             Grid.Row="1"
+                             Margin="-24, -15, -24, 0">
+                        <ListBox.ItemTemplate>
+                            <DataTemplate>
+                                <Grid>
+                                    <Grid.RowDefinitions>
+                                        <RowDefinition Height="Auto" />
+                                        <RowDefinition Height="Auto" />
+                                        <RowDefinition Height="20" />
+                                    </Grid.RowDefinitions>
+                                    <TextBlock TextWrapping="NoWrap"
+                                               Text="{Binding Title}"
+                                               Grid.Row="0"
+                                               FontSize="42"
+                                               HorizontalAlignment="Left" />
+                                    <TextBlock TextWrapping="Wrap"
+                                               Text="{Binding subTitle}"
+                                               Grid.Row="1"
+                                               FontSize="18"
+                                               HorizontalAlignment="Left" />
+                                    <TextBlock TextWrapping="Wrap"
+                                               Text=""
+                                               Grid.Row="1"
+                                               FontSize="18"
+                                               HorizontalAlignment="Left" />
+                                </Grid>
+                            </DataTemplate>
+                        </ListBox.ItemTemplate>
+                    </ListBox>
+                </Grid>
+            </controls:PanoramaItem>
+
+            <controls:PanoramaItem Header="search"
+                                   Margin="0, -15, 0, 0">
+                <Grid Margin="12, -30, 0, 0">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="Auto" />
+                    </Grid.RowDefinitions>
+                    <TextBlock Grid.Row="1"
+                               Height="39"
+                               HorizontalAlignment="Left"
+                               Margin="1,20,0,0"
+                               Name="searchTitle"
+                               Text="Enter keyword"
+                               TextWrapping="Wrap"
+                               VerticalAlignment="Top"
+                               Width="197"
+                               Foreground="{StaticResource PhoneBorderBrush}" />
+                    <TextBox Grid.Row="1"
+                             Height="72"
+                             HorizontalAlignment="Left"
+                             Margin="-8,40,0,0"
+                             Name="wpKeyword"
+                             Text=""
+                             VerticalAlignment="Top"
+                             Width="421" />
+                    <Image Grid.Row="1"
+                           Height="14"
+                           HorizontalAlignment="Left"
+                           Margin="6,185,0,0"
+                           Name="image2"
+                           Stretch="None"
+                           VerticalAlignment="Top"
+                           Width="397"
+                           Source="/images/dotted_line.png" />
+                    <Button Content="Submit"
+                            Grid.Row="1"
+                            Height="72"
+                            HorizontalAlignment="Left"
+                            Margin="214,108,0,0"
+                            Name="button5"
+                            VerticalAlignment="Top"
+                            Width="200"
+                            Click="searchWP" />
+                    <Grid x:Name="ContentPanel"
+                          Grid.Row="2"
+                          Margin="12,12,12,0">
+                        <toolkit:PerformanceProgressBar x:Name="performanceProgressBar"
+                                                        IsIndeterminate="True" />
+                    </Grid>
+                    <TextBlock Grid.Row="3"
+                               Height="39"
+                               HorizontalAlignment="Center"
+                               Margin="1,20,0,0"
+                               Name="promptTxt"
+                               Text=""
+                               TextWrapping="Wrap"
+                               VerticalAlignment="Top"
+                               Width="406" />
+                    <ListBox Name="searchList"
+                             Width="440"
+                             Height="340"
+                             Grid.Row="3"
+                             Margin="0, -15, 0, 0"
+                             SelectionChanged="Search_SelectionChanged"
+                             VerticalAlignment="Top">
+                        <ListBox.ItemTemplate>
+                            <DataTemplate>
+                                <Grid>
+                                    <Grid.RowDefinitions>
+                                        <RowDefinition Height="Auto" />
+                                        <RowDefinition Height="Auto" />
+                                        <RowDefinition Height="20" />
+                                    </Grid.RowDefinitions>
+                                    <TextBlock TextWrapping="NoWrap"
+                                               Text="{Binding Title}"
+                                               Grid.Row="0"
+                                               FontSize="42"
+                                               HorizontalAlignment="Left" />
+                                    <TextBlock TextWrapping="Wrap"
+                                               Text="{Binding Date}"
+                                               Grid.Row="1"
+                                               FontSize="18"
+                                               HorizontalAlignment="Left" />
+                                    <TextBlock TextWrapping="Wrap"
+                                               Text=""
+                                               Grid.Row="1"
+                                               FontSize="18"
+                                               HorizontalAlignment="Left" />
+                                </Grid>
+                            </DataTemplate>
+                        </ListBox.ItemTemplate>
+                    </ListBox>
+                </Grid>
+            </controls:PanoramaItem>
+
+            <controls:PanoramaItem Header="about"
+                                   Margin="0, -15, 0, 0">
+
+                <Grid Margin="12, -30, 0, 0">
+
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition />
+                        <ColumnDefinition Width="Auto" />
+                    </Grid.ColumnDefinitions>
+
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="*" />
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="Auto" />
+                    </Grid.RowDefinitions>
+
+                    <TextBlock Height="77"
+                               Grid.Row="0"
+                               Name="aboutTxt"
+                               Text="About Me"
+                               FontSize="42"
+                               Grid.ColumnSpan="2"
+                               Margin="0,0,0,0" />
+
+                    <Image Margin="18,0,0,0"
+                           Grid.Row="1"
+                           Grid.Column="1"
+                           Name="aboutImg"
+                           Stretch="Fill"
+                           VerticalAlignment="Top"
+                           Height="120"
+                           Width="120"
+                           MaxHeight="120"
+                           MaxWidth="120"
+                           Source="/images/default.jpg" />
+
+                    <ScrollViewer Grid.Row="1"
+                                  Grid.Column="0">
+                        <TextBlock Name="bioTxt"
+                                   Text=""
+                                   TextWrapping="Wrap" />
+                    </ScrollViewer>
+
+                    <Button Content="Contact"
+                            Grid.Row="2"
+                            HorizontalAlignment="Left"
+                            Name="button1"
+                            Click="sendEmail" />
+
+                    <TextBlock Grid.Row="3"
+                               Grid.ColumnSpan="2"
+                               Height="30"
+                               Name="textBlock4"
+                               Text="{StaticResource CopyrightMessage}"
+                               FontSize="18" />
+                </Grid>
+            </controls:PanoramaItem>
+
+        </controls:Panorama>
+
+    </Grid>
+
+</phone:PhoneApplicationPage>
