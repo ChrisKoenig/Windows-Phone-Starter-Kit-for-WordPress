@@ -1,4 +1,5 @@
-﻿Microsoft Visual Studio Solution File, Format Version 11.00
+﻿
+Microsoft Visual Studio Solution File, Format Version 11.00
 # Visual Studio 2010
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WordPressStarterKit", "WordPressStarterKit.csproj", "{37F43677-8D1C-46A8-9DD7-4C49017BF424}"
 EndProject
