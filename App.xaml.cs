@@ -60,12 +60,6 @@ namespace WordPressStarterKit
             InitializePhoneApplication();
         }
 
-        public void ExitNow()
-        {
-            // this will exit the application immediately
-            throw new Exception();
-        }
-
         // Code to execute when the application is launching (eg, from Start)
         // This code will not execute when the application is reactivated
         private void Application_Launching(object sender, LaunchingEventArgs e)

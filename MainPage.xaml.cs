@@ -37,22 +37,23 @@ namespace WordPressStarterKit
         {
             InitializeComponent();
 
-            if (!NetworkInterface.GetIsNetworkAvailable() || NetworkInterface.NetworkInterfaceType == NetworkInterfaceType.None)
+            Loaded += (s, e) =>
             {
-                MessageBox.Show("This application requires a network connection to function properly. Please fix your internet connection and re-launch the app.", "Network Error", MessageBoxButton.OK);
-                var app = App.Current as App;
-                app.ExitNow();
-            }
-            else
-            {
-                this.DataContext = this;
-                //search section -- progress bar control
-                performanceProgressBar.Visibility = Visibility.Collapsed;
-                //category section -- progress bar control
-                performanceProgressBar2.Visibility = Visibility.Collapsed;
-                //load recent post
-                ReadRss(new Uri(siteURL + "?feed=get_recent"));
-            }
+                if (!NetworkInterface.GetIsNetworkAvailable() || NetworkInterface.NetworkInterfaceType == NetworkInterfaceType.None)
+                {
+                    MessageBox.Show("This application requires a network connection to function properly. Please fix your internet connection and re-launch the app.", "Network Error", MessageBoxButton.OK);
+                }
+                else
+                {
+                    this.DataContext = this;
+                    //search section -- progress bar control
+                    performanceProgressBar.Visibility = Visibility.Collapsed;
+                    //category section -- progress bar control
+                    performanceProgressBar2.Visibility = Visibility.Collapsed;
+                    //load recent post
+                    ReadRss(new Uri(siteURL + "?feed=get_recent"));
+                }
+            };
         }
 
         public void ReadRss(Uri rssUri)
@@ -265,21 +266,6 @@ namespace WordPressStarterKit
         {
             categoryState = "";
             ReadCats(new Uri(siteURL + "?feed=categories&timestamp=" + DateTime.Now.Ticks));
-        }
-
-        protected override void OnBackKeyPress(System.ComponentModel.CancelEventArgs e)
-        {
-            if (panorama.SelectedIndex == 3)
-            {
-                ReadCats(new Uri(siteURL + "?feed=categories&timestamp=" + DateTime.Now.Ticks));
-                e.Cancel = true;
-            }
-            else
-            {
-                var targetItem = panorama.Items[0] as PanoramaItem;
-                panorama.DefaultItem = targetItem;
-                e.Cancel = true;
-            }
         }
     }
 }
