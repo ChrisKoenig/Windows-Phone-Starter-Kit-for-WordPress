@@ -76,7 +76,7 @@ namespace WordPressStarterKit
 
         public static void OpenBrowser(string url)
         {
-            WebBrowserTask webBrowserTask = new WebBrowserTask { URL = url };
+            WebBrowserTask webBrowserTask = new WebBrowserTask { Uri = new Uri(url) };
             webBrowserTask.Show();
         }
 
