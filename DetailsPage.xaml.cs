@@ -250,8 +250,8 @@ namespace WordPressStarterKit
 
         private void launchSite(object sender, RoutedEventArgs e)
         {
-            var url = String.Format("{0}?p={1}", site_url, post_id);
-            WebBrowserTask webBrowserTask = new WebBrowserTask { URL = url };
+            var uri = new Uri(String.Format("{0}?p={1}", site_url, post_id));
+            WebBrowserTask webBrowserTask = new WebBrowserTask { Uri = uri };
             webBrowserTask.Show();
         }
 
