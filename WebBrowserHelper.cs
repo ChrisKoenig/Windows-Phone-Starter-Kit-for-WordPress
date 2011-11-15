@@ -60,10 +60,9 @@ namespace WordPressStarterKit
             head.Append("<meta name=\"viewport\" content=\"width=device-width, initial-scale=1, maximum-scale=1\">");
             head.Append("<style>");
             head.Append(string.Format(
-                "body {{background-color:#188AA5;color:{1};font-family:'Segoe WP';margin:0;padding:0 }}",
-                GetBrowserColor("PhoneBackgroundColor"),
-                GetBrowserColor("PhoneForegroundColor"),
-                (double)Application.Current.Resources["PhoneFontSizeNormal"]));
+                "body {{background-color:{0};color:{1};font-family:'Segoe WP';margin:0;padding:0 }}",
+                GetBrowserColor("WebBrowserBackgroundColor"),
+                GetBrowserColor("WebBrowserForegroundColor")));
             head.Append(string.Format(
                 "a {{color:{0}}} a:link {{color:white}} a:visited {{color:white}} a:active{{color:white}}",
                 GetBrowserColor("PhoneAccentColor")));
@@ -82,9 +81,21 @@ namespace WordPressStarterKit
 
         private static string GetBrowserColor(string sourceResource)
         {
-            var color = (Color)Application.Current.Resources[sourceResource];
-
-            return "#" + color.ToString().Substring(3, 6);
+            var item = Application.Current.Resources[sourceResource];
+            if (item.GetType() == typeof(Color))
+            {
+                var color = (Color)item;
+                return "#" + color.ToString().Substring(3, 6);
+            }
+            else if (item.GetType() == typeof(SolidColorBrush))
+            {
+                var brush = (SolidColorBrush)item;
+                return "#" + brush.Color.ToString().Substring(3, 6);
+            }
+            else
+            {
+                throw new InvalidCastException("invalid color or brush: " + sourceResource);
+            }
         }
     }
 }

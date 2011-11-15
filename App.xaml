@@ -7,10 +7,16 @@
 
     <!--Application Resources-->
     <Application.Resources>
+        <!--
         <SolidColorBrush x:Key="WebBrowserForegroundColor"
-                         Color="SteelBlue" />
+                         Color="{StaticResource PhoneForegroundColor}" />
         <SolidColorBrush x:Key="WebBrowserBackgroundColor"
-                         Color="#FF4181BA" />
+                         Color="{StaticResource PhoneBackgroundColor}" />
+        -->
+        <SolidColorBrush x:Key="WebBrowserForegroundColor"
+                         Color="White" />
+        <SolidColorBrush x:Key="WebBrowserBackgroundColor"
+                         Color="#188AA5" />
         <sys:String x:Key="BlogTitle">chris koenig</sys:String>
         <ImageBrush x:Key="PanoramaBackgroundImage"
                     ImageSource="wp_wordpress_bg_trans.png" />
