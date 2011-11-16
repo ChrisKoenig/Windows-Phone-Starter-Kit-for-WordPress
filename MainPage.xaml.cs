@@ -206,7 +206,7 @@ namespace WordPressStarterKit
             if (homeList.SelectedIndex == -1)
                 return;
             RSSFeedItem currentPost = (RSSFeedItem)homeList.SelectedItem;
-            string output = string.Format("/DetailsPage.xaml?title={0}?&sub_title={1}&post_id={2}&site_url={3}&from_section=home", currentPost.Title, currentPost.subTitle, currentPost.ID, siteURL);
+            string output = string.Format("/DetailsPage.xaml?title={0}&sub_title={1}&post_id={2}&site_url={3}&from_section=home", currentPost.Title, currentPost.subTitle, currentPost.ID, siteURL);
             NavigationService.Navigate(new Uri(output, UriKind.Relative));
             homeList.SelectedIndex = -1;
         }
@@ -227,7 +227,7 @@ namespace WordPressStarterKit
             {
                 RSSFeedItem currentPost = (RSSFeedItem)catList.SelectedItem;
                 catList.Items.Clear();
-                string output = string.Format("/DetailsPage.xaml?title={0}?&sub_title={1}&post_id={2}&site_url={3}&from_section=categories", currentPost.Title, currentPost.subTitle, currentPost.ID, siteURL);
+                string output = string.Format("/DetailsPage.xaml?title={0}&sub_title={1}&post_id={2}&site_url={3}&from_section=categories", currentPost.Title, currentPost.subTitle, currentPost.ID, siteURL);
                 NavigationService.Navigate(new Uri(output, UriKind.Relative));
                 categoryState = "";
                 ReadCats(new Uri(siteURL + "?feed=categories"));
@@ -240,17 +240,19 @@ namespace WordPressStarterKit
             if (searchList.SelectedIndex == -1)
                 return;
             RSSFeedItem currentPost = (RSSFeedItem)searchList.SelectedItem;
-            string output = string.Format("/DetailsPage.xaml?title={0}?&sub_title={1}&site_url={2}&from_section=search&keyword={3}", currentPost.Title, currentPost.subTitle, siteURL, wpKeyword.Text);
+            string output = string.Format("/DetailsPage.xaml?title={0}&sub_title={1}&site_url={2}&from_section=search&keyword={3}", currentPost.Title, currentPost.subTitle, siteURL, wpKeyword.Text);
             NavigationService.Navigate(new Uri(output, UriKind.Relative));
             searchList.SelectedIndex = -1;
         }
 
         private void sendEmail(object sender, RoutedEventArgs e)
         {
-            EmailComposeTask emailAuthor = new EmailComposeTask();
-            emailAuthor.To = String.Format("<a href='mailto:{0}'>{0}</a>", siteEmail);
-            emailAuthor.Subject = siteAuthor + ", message from your WP7 WordPress Blog";
-            emailAuthor.Body = "";
+            EmailComposeTask emailAuthor = new EmailComposeTask()
+            {
+                To = String.Format("<a href='mailto:{0}'>{0}</a>", siteEmail),
+                Subject = siteAuthor + ", message from your WP7 WordPress Blog",
+                Body = ""
+            };
             emailAuthor.Show();
         }
 
@@ -265,7 +267,8 @@ namespace WordPressStarterKit
         private void cat_refresh(object sender, RoutedEventArgs e)
         {
             categoryState = "";
-            ReadCats(new Uri(siteURL + "?feed=categories&timestamp=" + DateTime.Now.Ticks));
+            var uri = String.Format("{0}?feed=categories&timestamp={1}", siteURL, DateTime.Now.Ticks);
+            ReadCats(new Uri(uri));
         }
     }
 }
