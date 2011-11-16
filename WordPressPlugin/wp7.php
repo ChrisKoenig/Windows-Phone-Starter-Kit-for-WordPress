@@ -26,7 +26,7 @@ function myPlugin_add_feed() {
  add_feed('user_info', 'user_info_feed');
  add_feed('add_comment', 'add_comment_feed');
  add_feed('get_recent', 'load_recent_feed');
-  add_feed('get_cat_feed', 'load_cat_feed');
+ add_feed('get_cat_feed', 'load_cat_feed');
  add_feed('get_comments_feed', 'load_guestb_by_id');
  
 }
@@ -67,7 +67,7 @@ $args = array(
     <title><?php bloginfo_rss('name'); wp_title_rss(); ?></title>
 		<link><?php bloginfo_rss('url') ?></link>
 		<atom:link href="<?php self_link() ?>" rel="self" type="application/rss+xml" />
-		<description><?php bloginfo_rss("description") ?></description><?php foreach( $comment_array as $post ){ ?><item><title><?php echo $post->comment_author; ?></title><author><?php echo $post->comment_author; ?></author><email><?php echo $post->comment_author_email; ?></email><comment> <?php  $comment = strip_tags($post->comment_content); $output = preg_replace("/[^A-Za-z0-9]/"," ",$comment); echo $output; ?></comment></item><?php } ?></channel></rss><?php } ?><?php
+		<description><?php bloginfo_rss("description") ?></description><?php foreach( $comment_array as $post ){ ?><item><title><?php echo $post->comment_author; ?></title><author><?php echo $post->comment_author; ?></author><email><?php echo $post->comment_author_email; ?></email><comment> <?php  $comment = strip_tags($post->comment_content); $output = preg_replace("/[^A-Za-z0-9íéáûõúöüóÍÉÁÛÕÚÖÜÓ,:!-\/\\.\\?\']/"," ", $comment); echo $output; ?></comment></item><?php } ?></channel></rss><?php } ?><?php
  
 //get recent post feed
 function load_recent_feed(){ 
