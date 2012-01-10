@@ -106,8 +106,9 @@
                     <ListBox Name="catList"
                              Width="390"
                              Height="500"
-                             SelectionChanged="Cat_SelectionChanged"
+                             Tap="catList_Tap"
                              VerticalAlignment="Top"
+                             toolkit:TiltEffect.IsTiltEnabled="True"
                              Grid.Row="1"
                              Margin="-24, -15, -24, 0">
                         <ListBox.ItemTemplate>
@@ -205,7 +206,8 @@
                              Height="340"
                              Grid.Row="3"
                              Margin="0, -15, 0, 0"
-                             SelectionChanged="Search_SelectionChanged"
+                             Tap="searchList_Tap"
+                             toolkit:TiltEffect.IsTiltEnabled="True"
                              VerticalAlignment="Top">
                         <ListBox.ItemTemplate>
                             <DataTemplate>

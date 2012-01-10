@@ -9,13 +9,9 @@
 //
 using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
-using System.Net;
 using System.Windows;
-using System.Windows.Controls;
 using System.Windows.Media.Imaging;
-using System.Xml.Linq;
 using Microsoft.Phone.Controls;
 using Microsoft.Phone.Net.NetworkInformation;
 using Microsoft.Phone.Tasks;
@@ -177,7 +173,8 @@ namespace WordPressStarterKit
             NavigationService.Navigate(new Uri(url, UriKind.Relative));
         }
 
-        private void Cat_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        //private void Cat_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        private void catList_Tap(object sender, System.Windows.Input.GestureEventArgs e)
         {
             if (catList.SelectedIndex == -1)
                 return;
@@ -209,7 +206,8 @@ namespace WordPressStarterKit
             catList.SelectedIndex = -1;
         }
 
-        private void Search_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        // private void Search_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        private void searchList_Tap(object sender, System.Windows.Input.GestureEventArgs e)
         {
             if (searchList.SelectedIndex == -1)
                 return;
