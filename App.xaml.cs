@@ -17,7 +17,7 @@ using Microsoft.Phone.Shell;
 
 namespace WordPressStarterKit
 {
-    public partial class App : Application
+    public partial class App : Application, IBlogApp
     {
         // private static MainViewModel viewModel = null;
 
@@ -58,6 +58,8 @@ namespace WordPressStarterKit
 
             // Phone-specific initialization
             InitializePhoneApplication();
+
+            AppValues = new AppConfig();
         }
 
         // Code to execute when the application is launching (eg, from Start)
@@ -141,5 +143,8 @@ namespace WordPressStarterKit
         }
 
         #endregion Phone application initialization
+
+        public AppConfig AppValues { get; set; }
+
     }
 }
