@@ -20,22 +20,26 @@ using Microsoft.Phone.Controls;
 using Microsoft.Phone.Net.NetworkInformation;
 using Microsoft.Phone.Tasks;
 using WordPressStarterKit.Models;
+using WordPressStarterKit.Networking;
+using WordPressStarterKit.Extensions;
 
 namespace WordPressStarterKit
 {
     public partial class MainPage : PhoneApplicationPage
     {
-        //Enter your WordPress URL below
-        public string siteURL = "http://blog.koenigweb.com/";
-        //dynamic variables
-        public string siteAuthor = "";
-        public string siteEmail = "";
-        public string categoryState = "";
-        public string cat_id = "";
+        IBlogReader blogReader;
+        AppConfig app = ((IBlogApp)Application.Current).AppValues;
 
-        public MainPage()
+        public MainPage() : this(null) { }
+
+        public MainPage(IBlogReader BlogReader)
         {
             InitializeComponent();
+            // poor mans IoC
+            BlogReader.IfNullDoThis(() => BlogReader = Infrastructure.BlogReader());
+            blogReader = BlogReader;
+
+            panorama.SetBackgroundForTheme();
 
             Loaded += (s, e) =>
             {
@@ -51,186 +55,153 @@ namespace WordPressStarterKit
                     //category section -- progress bar control
                     performanceProgressBar2.Visibility = Visibility.Collapsed;
                     //load recent post
-                    ReadRss(new Uri(siteURL + "?feed=get_recent"));
+
+                    // UserInfo then RecientFeed then Categories
+                    ReadUserinfo(() =>
+                     GetRecientRssFeed(() =>
+                         ReadCats(null)));
                 }
             };
         }
-
-        public void ReadRss(Uri rssUri)
+        private void updateAppValues()
         {
-            WebClient wclient = new WebClient();
-            wclient.OpenReadCompleted += (sender, e) =>
-            {
-                if (e.Error != null)
-                    return;
-                Stream str = e.Result;
-                XDocument xdoc = XDocument.Load(str);
-                List<RSSFeedItem> RSSFeedItems = (from item in xdoc.Descendants("item")
-                                                  select new RSSFeedItem()
-                                                  {
-                                                      Title = item.Element("title").Value,
-                                                      Author = item.Element("author").Value,
-                                                      Description = item.Element("description").Value,
-                                                      Tags = item.Element("tags").Value,
-                                                      ID = item.Element("id").Value,
-                                                      Date = item.Element("pubDate").Value,
-                                                      subTitle = String.Format("{0} | {1} | {2}", item.Element("author").Value, item.Element("pubDate").Value, item.Element("tags").Value),
-                                                  }).Take(10).ToList();
-                str.Close();
-                homeList.Items.Clear();
-                RSSFeedItems.ForEach(item => homeList.Items.Add(item));
-                //preload About section
-                ReadUserinfo(new Uri(siteURL + "?feed=user_info&datetime=" + DateTime.Now.Ticks));
-            };
-            wclient.OpenReadAsync(rssUri);
+            ((IBlogApp)Application.Current).AppValues = app;
         }
 
-        public void ReadUserinfo(Uri rssUri)
+        protected internal void GetRecientRssFeed(Action OnComplete)
         {
-            WebClient wclient = new WebClient();
-            wclient.OpenReadCompleted += (sender, e) =>
+            blogReader.GetRecentRss((results, ex) =>
             {
-                if (e.Error != null)
+                if (ex != null)
                     return;
-                Stream str = e.Result;
-                XDocument xdoc = XDocument.Load(str);
-                List<UserInfo> blogInfo = (from item in xdoc.Descendants("UserInfo")
-                                           select new UserInfo()
-                                   {
-                                       ID = item.Element("UserID").Value,
-                                       displayName = item.Element("DisplayName").Value,
-                                       Email = item.Element("EmailAddress").Value,
-                                       Avatar = item.Element("Gravatar").Value,
-                                       Bio = item.Element("Bio").Value,
-                                   }).Take(10).ToList();
-                str.Close();
+
+                List<RSSFeedItem> RSSFeedItems = results;
+                homeList.Items.Clear();
+                RSSFeedItems.ForEach(item => homeList.Items.Add(item));
+
+                //preload About section
+                OnComplete.IfNotNullInvoke();
+            });
+        }
+
+        protected internal void ReadUserinfo(Action OnComplete)
+        {
+            blogReader.ReadUserinfo((results, ex) =>
+            {
+                if (ex != null)
+                    return;
+
+                List<UserInfo> blogInfo = results;
+
                 aboutTxt.Text = "About " + blogInfo[0].displayName;
                 Uri uri = new Uri(blogInfo[0].Avatar);
                 aboutImg.Source = new BitmapImage(uri);
                 bioTxt.Text = blogInfo[0].Bio;
-                siteAuthor = blogInfo[0].displayName;
-                siteEmail = blogInfo[0].Email;
+                app.SiteAuthorName = blogInfo[0].displayName;
+                app.SiteEmail = blogInfo[0].Email;
+
+                updateAppValues();
+
                 //preload Categories section
-                ReadCats(new Uri(siteURL + "?feed=categories&datetime=" + DateTime.Now.Ticks));
-            };
-            wclient.OpenReadAsync(rssUri);
+                OnComplete.IfNotNullInvoke();
+            });
         }
 
-        public void ReadCats(Uri rssUri)
+        protected internal void ReadCats()
         {
-            WebClient wclient = new WebClient();
-            wclient.OpenReadCompleted += (sender, e) =>
+            ReadCats(null);
+        }
+        protected internal void ReadCats(Action OnComplete)
+        {
+            blogReader.GetBlogCategories((results, ex) =>
             {
-                if (e.Error != null)
+                if (ex != null)
                     return;
-                Stream str = e.Result;
-                XDocument xdoc = XDocument.Load(str);
-                List<CatFeedItem> catFeedItems = (from item in xdoc.Descendants("item")
-                                                  select new CatFeedItem()
-                                                  {
-                                                      Title = item.Element("title").Value,
-                                                      ID = item.Element("id").Value,
-                                                      subTitle = ""
-                                                  }).Take(10).ToList();
-                str.Close();
+
+                List<CatFeedItem> catFeedItems = results;
                 catList.Items.Clear();
                 catFeedItems.ForEach(item => catList.Items.Add(item));
-            };
-            wclient.OpenReadAsync(rssUri);
+
+                OnComplete.IfNotNullInvoke();
+            });
         }
 
-        public void ReadSubCat(Uri rssUri)
+        protected internal void ReadSubCat()
         {
-            categoryState = "loaded";
-            WebClient wclient = new WebClient();
-            wclient.OpenReadCompleted += (sender, e) =>
+            app.categoryState = "loaded";
+            updateAppValues();
+
+            blogReader.GetRssByCategory(app.cat_id, (results, ex) =>
             {
-                if (e.Error != null)
+                if (ex != null)
                     return;
-                Stream str = e.Result;
-                XDocument xdoc = XDocument.Load(str);
-                List<RSSFeedItem> RSSFeedItems = (from item in xdoc.Descendants("item")
-                                                  select new RSSFeedItem()
-                                                  {
-                                                      Title = item.Element("title").Value,
-                                                      Author = item.Element("author").Value,
-                                                      Description = item.Element("description").Value,
-                                                      Tags = item.Element("tags").Value,
-                                                      ID = item.Element("id").Value,
-                                                      Date = item.Element("pubDate").Value,
-                                                      subTitle = String.Format("{0} | {1} | {2}", item.Element("author").Value, item.Element("pubDate").Value, item.Element("tags").Value),
-                                                  }).Take(10).ToList();
-                str.Close();
+
+                List<RSSFeedItem> RSSFeedItems = results;
                 catList.Items.Clear();
                 RSSFeedItems.ForEach(item => catList.Items.Add(item));
                 performanceProgressBar2.Visibility = Visibility.Collapsed;
-            };
-            wclient.OpenReadAsync(rssUri);
+            });
         }
 
-        public void ReadWP(Uri rssUri)
+        protected internal void BlogSearch(string SearchTerms)
         {
-            WebClient wclient = new WebClient();
-            wclient.OpenReadCompleted += (sender, e) =>
+            blogReader.BlogSearch(SearchTerms, (results, ex) =>
             {
-                if (e.Error != null)
+                if (ex != null)
                     return;
-                Stream str = e.Result;
-                XDocument xdoc = XDocument.Load(str);
-                List<RSSFeedItem> RSSFeedItems = (from item in xdoc.Descendants("item")
-                                                  select new RSSFeedItem()
-                                                  {
-                                                      Title = item.Element("title").Value,
-                                                      Date = item.Element("pubDate").Value,
-                                                      Description = item.Element("description").Value,
-                                                  }).Take(10).ToList();
-                str.Close();
+
+                List<RSSFeedItem> RSSFeedItems = results;
                 searchList.Items.Clear();
                 RSSFeedItems.ForEach(item => searchList.Items.Add(item));
-                if (RSSFeedItems.Count == 0)
-                {
-                    promptTxt.Text = "No result found.";
-                }
-                else
-                {
-                    promptTxt.Text = "";
-                }
-                //hide progress bar
+                promptTxt.Text = (RSSFeedItems.Count == 0) ? "No result found." : promptTxt.Text = "";
                 performanceProgressBar.Visibility = Visibility.Collapsed;
-            };
-            wclient.OpenReadAsync(rssUri);
+            });
         }
 
         private void homeList_MouseLeftButtonUp(object sender, System.Windows.Input.MouseButtonEventArgs e)
         {
             if (homeList.SelectedIndex == -1)
                 return;
-            RSSFeedItem currentPost = (RSSFeedItem)homeList.SelectedItem;
-            string output = string.Format("/DetailsPage.xaml?title={0}&sub_title={1}&post_id={2}&site_url={3}&from_section=home", currentPost.Title, currentPost.subTitle, currentPost.ID, siteURL);
-            NavigationService.Navigate(new Uri(output, UriKind.Relative));
+
+            app.CurrentPost = (RSSFeedItem)homeList.SelectedItem;
+            updateAppValues();
+
+            NavTo("/DetailsPage.xaml?from_section=home");
             homeList.SelectedIndex = -1;
         }
 
+        private void NavTo(string url)
+        {
+            NavigationService.Navigate(new Uri(url, UriKind.Relative));
+        }
         private void Cat_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             if (catList.SelectedIndex == -1)
                 return;
-            if (categoryState == "")
+
+            if (app.categoryState == "")
             {
+                // Load list of posts based on category //
                 performanceProgressBar2.Visibility = Visibility.Visible;
-                CatFeedItem currentPost = (CatFeedItem)catList.SelectedItem;
+                app.CurrentCategory = (CatFeedItem)catList.SelectedItem;
                 catList.Items.Clear();
-                cat_id = currentPost.ID;
-                ReadSubCat(new Uri(String.Format("{0}?feed=get_cat_feed&cat_id={1}", siteURL, currentPost.ID)));
+                app.cat_id = app.CurrentCategory.ID;
+                updateAppValues();
+
+                ReadSubCat();
             }
             else
             {
-                RSSFeedItem currentPost = (RSSFeedItem)catList.SelectedItem;
+                // Load Details Page (blog post) //
+                // app.CurrentCategory = (CatFeedItem)catList.SelectedItem;
+                app.CurrentPost = (RSSFeedItem)catList.SelectedItem;
                 catList.Items.Clear();
-                string output = string.Format("/DetailsPage.xaml?title={0}&sub_title={1}&post_id={2}&site_url={3}&from_section=categories", currentPost.Title, currentPost.subTitle, currentPost.ID, siteURL);
-                NavigationService.Navigate(new Uri(output, UriKind.Relative));
-                categoryState = "";
-                ReadCats(new Uri(siteURL + "?feed=categories"));
+                app.categoryState = "";
+                updateAppValues();
+
+                NavTo("/DetailsPage.xaml?from_section=categories");
+
+                ReadCats();
             }
             catList.SelectedIndex = -1;
         }
@@ -239,9 +210,12 @@ namespace WordPressStarterKit
         {
             if (searchList.SelectedIndex == -1)
                 return;
-            RSSFeedItem currentPost = (RSSFeedItem)searchList.SelectedItem;
-            string output = string.Format("/DetailsPage.xaml?title={0}&sub_title={1}&site_url={2}&from_section=search&keyword={3}", currentPost.Title, currentPost.subTitle, siteURL, wpKeyword.Text);
-            NavigationService.Navigate(new Uri(output, UriKind.Relative));
+
+            app.CurrentPost = (RSSFeedItem)searchList.SelectedItem;
+            app.keyWords = wpKeyword.Text;
+            updateAppValues();
+
+            NavTo("/DetailsPage.xaml?from_section=search");
             searchList.SelectedIndex = -1;
         }
 
@@ -249,8 +223,8 @@ namespace WordPressStarterKit
         {
             EmailComposeTask emailAuthor = new EmailComposeTask()
             {
-                To = String.Format("<a href='mailto:{0}'>{0}</a>", siteEmail),
-                Subject = siteAuthor + ", message from your WP7 WordPress Blog",
+                To = String.Format("<a href='mailto:{0}'>{0}</a>", app.SiteEmail),
+                Subject = String.Format("{0}, message from your {1} WP7 app", app.SiteAuthorName, app.SiteTitle),
                 Body = ""
             };
             emailAuthor.Show();
@@ -260,15 +234,18 @@ namespace WordPressStarterKit
         {
             performanceProgressBar.Visibility = Visibility.Visible;
             searchList.Items.Clear();
-            string output = string.Format("{0}?s={1}&feed=rss2&timestamp={2}", siteURL, wpKeyword.Text, DateTime.Now.Ticks);
-            ReadWP(new Uri(output));
+            app.keyWords = wpKeyword.Text;
+            updateAppValues();
+
+            BlogSearch(app.keyWords);
         }
 
         private void cat_refresh(object sender, RoutedEventArgs e)
         {
-            categoryState = "";
-            var uri = String.Format("{0}?feed=categories&timestamp={1}", siteURL, DateTime.Now.Ticks);
-            ReadCats(new Uri(uri));
+            app.categoryState = "";
+            updateAppValues();
+
+            ReadCats();
         }
     }
 }

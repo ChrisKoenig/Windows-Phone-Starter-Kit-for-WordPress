@@ -66,13 +66,22 @@
     <Compile Include="App.xaml.cs">
       <DependentUpon>App.xaml</DependentUpon>
     </Compile>
+    <Compile Include="AppConfig.cs" />
     <Compile Include="Controls\LightDarkImageButton.xaml.cs">
       <DependentUpon>LightDarkImageButton.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Extensions\AppSpecificExtensions.cs" />
+    <Compile Include="Extensions\Extensions.cs" />
+    <Compile Include="IBlogApp.cs" />
+    <Compile Include="Infrastructure.cs" />
     <Compile Include="Models\CatFeedItem.cs" />
     <Compile Include="Models\RSSCommentItem.cs" />
     <Compile Include="Models\RSSFeedItem.cs" />
     <Compile Include="Models\UserInfo.cs" />
+    <Compile Include="Networking\IBlogReader.cs" />
+    <Compile Include="Networking\INetworkWire.cs" />
+    <Compile Include="Networking\NetworkWire.cs" />
+    <Compile Include="Networking\WordPressPlugInReader.cs" />
     <Compile Include="WebBrowserHelper.cs" />
     <Compile Include="MainPage.xaml.cs">
       <DependentUpon>MainPage.xaml</DependentUpon>
@@ -138,6 +147,7 @@
     <Resource Include="Toolkit.Content\ApplicationBar.Select.png" />
     <Resource Include="wp_wordpress_bg_trans.png" />
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildExtensionsPath)\Microsoft\Silverlight for Phone\$(TargetFrameworkVersion)\Microsoft.Silverlight.$(TargetFrameworkProfile).Overrides.targets" />
   <Import Project="$(MSBuildExtensionsPath)\Microsoft\Silverlight for Phone\$(TargetFrameworkVersion)\Microsoft.Silverlight.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
