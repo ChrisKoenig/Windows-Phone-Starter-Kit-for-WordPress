@@ -107,7 +107,7 @@ $recent_posts = get_posts( $args );
 <?php foreach( $recent_posts as $post ){ ?>
         <item><title><?php echo $post->post_title ?></title>
 			<author><?php  $user_info = get_userdata($post->post_author);echo $user_info->display_name;  ?></author>
-            <description><![CDATA[<?php echo urlencode($post->post_content) ?>]]></description>
+            <description><![CDATA[<?php echo $post->post_content ?>]]></description>
             <tags><?php $category = get_the_category($post->ID); echo $category[0]->cat_name; ?></tags>
             <id><?php echo $post->ID ?></id> 
             <pubDate><?php $dateTime = new DateTime($post->post_modified); echo date_format($dateTime, 'M jS Y');?></pubDate></item>
@@ -210,15 +210,15 @@ function category_feed(){
         </item>
 <?php } ?>
 	</channel> 
-</rss><?php }; ?><?php
+</rss><?php }; ?>
+
+<?php
 //get user info
 function user_info_feed(){
 
 // header('Content-Type: text/xml; charset='.get_option('blog_charset'), true);
 
     global $wpdb; 
-
-    
 
     $current_user = get_userdata(1);
 

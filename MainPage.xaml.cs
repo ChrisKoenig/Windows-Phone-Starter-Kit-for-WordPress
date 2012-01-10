@@ -19,9 +19,9 @@ using System.Xml.Linq;
 using Microsoft.Phone.Controls;
 using Microsoft.Phone.Net.NetworkInformation;
 using Microsoft.Phone.Tasks;
+using WordPressStarterKit.Extensions;
 using WordPressStarterKit.Models;
 using WordPressStarterKit.Networking;
-using WordPressStarterKit.Extensions;
 
 namespace WordPressStarterKit
 {
@@ -58,17 +58,18 @@ namespace WordPressStarterKit
 
                     // UserInfo then RecientFeed then Categories
                     ReadUserinfo(() =>
-                     GetRecientRssFeed(() =>
+                     GetRecentRssFeed(() =>
                          ReadCats(null)));
                 }
             };
         }
+
         private void updateAppValues()
         {
             ((IBlogApp)Application.Current).AppValues = app;
         }
 
-        protected internal void GetRecientRssFeed(Action OnComplete)
+        protected internal void GetRecentRssFeed(Action OnComplete)
         {
             blogReader.GetRecentRss((results, ex) =>
             {
@@ -111,6 +112,7 @@ namespace WordPressStarterKit
         {
             ReadCats(null);
         }
+
         protected internal void ReadCats(Action OnComplete)
         {
             blogReader.GetBlogCategories((results, ex) =>
@@ -174,6 +176,7 @@ namespace WordPressStarterKit
         {
             NavigationService.Navigate(new Uri(url, UriKind.Relative));
         }
+
         private void Cat_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             if (catList.SelectedIndex == -1)

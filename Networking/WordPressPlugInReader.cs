@@ -4,8 +4,8 @@ using System.IO;
 using System.Linq;
 using System.Net;
 using System.Xml.Linq;
-using WordPressStarterKit.Models;
 using WordPressStarterKit.Extensions;
+using WordPressStarterKit.Models;
 
 namespace WordPressStarterKit.Networking
 {
@@ -13,12 +13,13 @@ namespace WordPressStarterKit.Networking
     {
         INetworkWire network;
         AppConfig app;
-        
+
         public WordPressPlugInReader(INetworkWire NetworkHelper, AppConfig appSettings)
         {
             network = NetworkHelper;
             app = appSettings;
         }
+
         public void GetRecentRss(Action<List<RSSFeedItem>, Exception> callback)
         {
             var uri = new Uri(app.SiteURL + "?feed=get_recent");
@@ -27,7 +28,8 @@ namespace WordPressStarterKit.Networking
                     callback(results, ex);
                 });
         }
-        public void GetRssByCategory(string CategoryId, Action<List<RSSFeedItem>, Exception>callback)
+
+        public void GetRssByCategory(string CategoryId, Action<List<RSSFeedItem>, Exception> callback)
         {
             var uri = new Uri(String.Format("{0}?feed=get_cat_feed&cat_id={1}", app.SiteURL, CategoryId));
             ReadRss(uri, (results, ex) =>
@@ -35,11 +37,12 @@ namespace WordPressStarterKit.Networking
                     callback(results, ex);
                 });
         }
+
         protected internal void ReadRss(Uri rssUri, Action<List<RSSFeedItem>, Exception> callback)
         {
             callback.CheckNotNullThrowException();
 
-            network.GetStringFromURL(rssUri,(results, ex) =>
+            network.GetStringFromURL(rssUri, (results, ex) =>
                 {
                     if (ex != null)
                     {
@@ -62,6 +65,7 @@ namespace WordPressStarterKit.Networking
                     callback(RSSFeedItems, null);
                 });
         }
+
         public void BlogSearch(string SearchTerms, Action<List<RSSFeedItem>, Exception> callback)
         {
             var url = string.Format("{0}?s={1}&feed=rss2&timestamp={2}", app.SiteURL, SearchTerms, DateTime.Now.Ticks);
@@ -71,6 +75,7 @@ namespace WordPressStarterKit.Networking
                 callback(results, ex);
             });
         }
+
         public void GetBlogCategories(Action<List<CatFeedItem>, Exception> callback)
         {
             callback.CheckNotNullThrowException();
@@ -92,11 +97,12 @@ namespace WordPressStarterKit.Networking
                 callback(catFeedItems, null);
             });
         }
+
         public void ReadUserinfo(Action<List<UserInfo>, Exception> callback)
         {
             callback.CheckNotNullThrowException();
 
-            var uri = new Uri(String.Format("{0}?feed=user_info&user_id={1}datetime={2}", app.SiteURL, app.SiteAuthorBlogUserID, DateTime.Now.Ticks));
+            var uri = new Uri(String.Format("{0}?feed=user_info&user_id={1}&datetime={2}", app.SiteURL, app.SiteAuthorBlogUserID, DateTime.Now.Ticks));
             network.GetStringFromURL(uri, (results, ex) =>
                 {
                     if (ex != null)
@@ -128,7 +134,6 @@ namespace WordPressStarterKit.Networking
             {
                 if (ex != null)
                     callback(null, ex);
-
 
                 XDocument xdoc = XDocument.Parse(results);
 

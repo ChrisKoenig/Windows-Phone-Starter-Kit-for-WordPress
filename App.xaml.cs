@@ -145,6 +145,5 @@ namespace WordPressStarterKit
         #endregion Phone application initialization
 
         public AppConfig AppValues { get; set; }
-
     }
 }
