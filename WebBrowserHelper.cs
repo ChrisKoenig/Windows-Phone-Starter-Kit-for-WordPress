@@ -57,7 +57,7 @@ namespace WordPressStarterKit
         {
             var head = new StringBuilder();
             head.Append("<head>");
-            head.Append("<meta name=\"viewport\" content=\"width=device-width, initial-scale=1, maximum-scale=1\">");
+            head.Append("<meta name=\"viewport\" content=\"width=" + viewportWidth + ", initial-scale=1, maximum-scale=1\">");
             head.Append("<style>");
             head.Append(string.Format(
                 "body {{background-color:{0};color:{1};font-family:'Segoe WP';margin:0;padding:0 }}",
