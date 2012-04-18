@@ -9,11 +9,11 @@ namespace WordPressStarterKit.Networking
         public void GetStringFromURL(Uri uri, Action<string, Exception> callback)
         {
             var c = new WebClient();
-          //  c.AllowReadStreamBuffering = false;
+            //  c.AllowReadStreamBuffering = false;
             c.DownloadStringCompleted += (sender, e) =>
             {
                 if (e.Error == null)
-                    callback(e.Result.scrubHTML(), null);
+                    callback(e.Result, null);
                 else
                     callback(null, e.Error);
             };

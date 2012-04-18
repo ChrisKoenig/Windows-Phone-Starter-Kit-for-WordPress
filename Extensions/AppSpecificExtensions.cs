@@ -1,7 +1,7 @@
 using System;
 using System.Windows;
-using System.Windows.Media;
 using System.Windows.Controls;
+using System.Windows.Media;
 
 namespace WordPressStarterKit.Extensions
 {
@@ -17,6 +17,7 @@ namespace WordPressStarterKit.Extensions
             }
         }
 
+        [Obsolete("This functionality has been replaced by code in the plugin.", true)]
         public static string scrubHTML(this string input)
         {
             // used because XDoc.Parse doesn't handle &'s very well....
