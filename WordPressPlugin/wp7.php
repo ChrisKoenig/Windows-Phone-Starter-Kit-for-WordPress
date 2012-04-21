@@ -1,15 +1,16 @@
 <?php
 
 /*
-Plugin Name: Windows Phone RSS API by Microsoft
+Plugin Name: Windows Phone Plugin for WordPress
 Plugin URI: http://chriskoenig.net
 Description: WordPress plugin from Microsoft that generates WIndows Phone 7 friendly RSS Feeds.
-Version: 1.3
-Date: 4 Mar 2012
+Version: 1.4
+Date: 21 Apr 2012
 Author: Chris Koenig(Microsoft), Kirk Ballou(Touch Titans)
 Author URI: http://chriskoenig.net
 */ 
 
+// update: 21 APR 2012 - cleaned up code and fixed an issue with the comment feed display and changed plugin name
 // update: 10 JAN 2012 - updated to match the changes Caleb made to the original source
 
 //Add the feeds 
@@ -50,17 +51,17 @@ function load_guestb_by_id()
        xmlns:dc="http://purl.org/dc/elements/1.1/"
        xmlns:atom="http://www.w3.org/2005/Atom"
        xmlns:sy="http://purl.org/rss/1.0/modules/syndication/">
-                <channel>
+  <channel>
     <title><?php bloginfo_rss('name'); wp_title_rss(); ?></title>
-                                <link><?php bloginfo_rss('url') ?></link>
-                                <atom:link href="<?php self_link() ?>" rel="self" type="application/rss+xml" />
-                                <description><?php bloginfo_rss("description") ?></description>
+    <link><?php bloginfo_rss('url') ?></link>
+    <atom:link href="<?php self_link() ?>" rel="self" type="application/rss+xml" />
+    <description><?php bloginfo_rss("description") ?></description>
 <?php foreach( $comment_array as $post ){ ?>
     <item>
-      <title><?php $title= htmlspecialchars($post->comment_author); echo $title ?></title>
-      <author><?php echo $post->comment_author; ?></author>
+      <title><?php echo formatDateAndTime($post->comment_date); ?></title>
+      <author><?php echo htmlspecialchars($post->comment_author); ?></author>
       <email><?php echo $post->comment_author_email; ?></email>
-      <comment><?php  $comment = htmlspecialchars($post->comment_content); echo $comment; ?></comment>
+      <comment><?php  echo htmlspecialchars($post->comment_content); ?></comment>
     </item>
 <?php } ?>
   </channel>
@@ -88,24 +89,24 @@ function load_recent_feed()
 
   echo '<?xml version="1.0" encoding="UTF-8"?>'; 
 ?><rss version="2.0"
-                xmlns:content="http://purl.org/rss/1.0/modules/content/"
-                xmlns:dc="http://purl.org/dc/elements/1.1/"
-                xmlns:atom="http://www.w3.org/2005/Atom"
-                xmlns:sy="http://purl.org/rss/1.0/modules/syndication/">
-                <channel>
-    <title><?php bloginfo_rss('name'); wp_title_rss(); ?></title>
-                                <link><?php bloginfo_rss('url') ?></link>
-                                <atom:link href="<?php self_link() ?>" rel="self" type="application/rss+xml" />
-                                <description><?php bloginfo_rss("description") ?></description>
+    xmlns:content="http://purl.org/rss/1.0/modules/content/"
+    xmlns:dc="http://purl.org/dc/elements/1.1/"
+    xmlns:atom="http://www.w3.org/2005/Atom"
+    xmlns:sy="http://purl.org/rss/1.0/modules/syndication/">
+    <channel>
+      <title><?php bloginfo_rss('name'); wp_title_rss(); ?></title>
+      <link><?php bloginfo_rss('url') ?></link>
+      <atom:link href="<?php self_link() ?>" rel="self" type="application/rss+xml" />
+      <description><?php bloginfo_rss("description") ?></description>
 <?php foreach( $recent_posts as $post ){ ?>
-        <item>
-          <title><?php $title=htmlspecialchars($post->post_title); echo $title; ?></title>
-                                                    <author><?php  $user_info = get_userdata($post->post_author);echo $user_info->display_name;  ?></author>
-          <description><![CDATA[<?php echo $post->post_content ?>]]></description>
-          <tags><?php $category = get_the_category($post->ID); echo $category[0]->cat_name; ?></tags>
-          <id><?php echo $post->ID ?></id> 
-          <pubDate><?php $dateTime = new DateTime($post->post_modified); echo date_format($dateTime, 'M jS Y');?></pubDate>
-        </item>
+      <item>
+        <title><?php $title=htmlspecialchars($post->post_title); echo $title; ?></title>
+        <author><?php  $user_info = get_userdata($post->post_author);echo $user_info->display_name;  ?></author>
+        <description><![CDATA[<?php echo $post->post_content ?>]]></description>
+        <tags><?php $category = get_the_category($post->ID); echo $category[0]->cat_name; ?></tags>
+        <id><?php echo $post->ID ?></id> 
+        <pubDate><?php echo formatDateAndTime($post->post_modified);?></pubDate>
+      </item>
 <?php } ?> 
   </channel> 
 </rss>
@@ -132,26 +133,26 @@ function load_cat_feed()
   $recent_posts = get_posts( $args );
   echo '<?xml version="1.0" encoding="UTF-8"?>'; 
 ?><rss version="2.0"
-                xmlns:content="http://purl.org/rss/1.0/modules/content/"
-                xmlns:dc="http://purl.org/dc/elements/1.1/"
-                xmlns:atom="http://www.w3.org/2005/Atom"
-                xmlns:sy="http://purl.org/rss/1.0/modules/syndication/">
-                <channel>
-    <title><?php bloginfo_rss('name'); wp_title_rss(); ?></title>
-                                <link><?php bloginfo_rss('url') ?></link>
-                                <atom:link href="<?php self_link() ?>" rel="self" type="application/rss+xml" />
-                                <description><?php $description = htmlentities(bloginfo_rss("description")); echo $description; ?></description>
+    xmlns:content="http://purl.org/rss/1.0/modules/content/"
+    xmlns:dc="http://purl.org/dc/elements/1.1/"
+    xmlns:atom="http://www.w3.org/2005/Atom"
+    xmlns:sy="http://purl.org/rss/1.0/modules/syndication/">
+    <channel>
+      <title><?php bloginfo_rss('name'); wp_title_rss(); ?></title>
+      <link><?php bloginfo_rss('url') ?></link>
+      <atom:link href="<?php self_link() ?>" rel="self" type="application/rss+xml" />
+      <description><?php $description = htmlentities(bloginfo_rss("description")); echo $description; ?></description>
 <?php foreach( $recent_posts as $post ){ ?>
-    <item>
-      <title><?php $title=htmlspecialchars($post->post_title); echo $title; ?></title>
-                                                <author><?php  $user_info = get_userdata($post->post_author);echo $user_info->display_name;  ?></author>
-      <description><![CDATA[<?php echo $post->post_content ?>]]></description>
-      <tags><?php $category = get_the_category($post->ID); echo $category[0]->cat_name; ?></tags>
-      <id><?php echo $post->ID ?></id> 
-      <pubDate><?php $dateTime = new DateTime($post->post_modified); echo date_format($dateTime, 'M jS Y');?></pubDate>
-    </item>
+      <item>
+        <title><?php $title=htmlspecialchars($post->post_title); echo $title; ?></title>
+        <author><?php  $user_info = get_userdata($post->post_author);echo $user_info->display_name;  ?></author>
+        <description><![CDATA[<?php echo $post->post_content ?>]]></description>
+        <tags><?php $category = get_the_category($post->ID); echo $category[0]->cat_name; ?></tags>
+        <id><?php echo $post->ID ?></id> 
+        <pubDate><?php echo formatDateAndTime($post->post_modified); ?></pubDate>
+      </item>
 <?php } ?>
-  </channel> 
+    </channel> 
 </rss>
 
 <?php }
@@ -169,23 +170,24 @@ function category_feed()
     
     echo '<?xml version="1.0" encoding="UTF-8"?>'; 
 ?><rss version="2.0"
-                xmlns:content="http://purl.org/rss/1.0/modules/content/"
-                xmlns:dc="http://purl.org/dc/elements/1.1/"
-                xmlns:atom="http://www.w3.org/2005/Atom"
-                xmlns:sy="http://purl.org/rss/1.0/modules/syndication/">
-                <channel>
-                                <title><?php bloginfo_rss('name'); wp_title_rss(); ?></title>
-                                <link><?php bloginfo_rss('url') ?></link>
-                                <atom:link href="<?php self_link() ?>" rel="self" type="application/rss+xml" />
-                                <description><?php bloginfo_rss("description") ?></description>
+   xmlns:content="http://purl.org/rss/1.0/modules/content/"
+   xmlns:dc="http://purl.org/dc/elements/1.1/"
+   xmlns:atom="http://www.w3.org/2005/Atom"
+   xmlns:sy="http://purl.org/rss/1.0/modules/syndication/">
+   <channel>
+    <title><?php bloginfo_rss('name'); wp_title_rss(); ?></title>
+    <link><?php bloginfo_rss('url') ?></link>
+    <atom:link href="<?php self_link() ?>" rel="self" type="application/rss+xml" />
+    <description><?php bloginfo_rss("description") ?></description>
 <?php foreach ($categories as $category) { ?>
     <item>
       <title><?php echo $category->name; ?></title>
       <id><?php echo $category->cat_ID; ?></id>
     </item>
 <?php } ?>
-                </channel> 
+  </channel> 
 </rss><?php }; 
+
 
 //get user info
 function user_info_feed()
@@ -244,4 +246,11 @@ function add_comment_feed()
   wp_new_comment( $data ); 
    
 }
+
+function formatDateAndTime($dtm)
+{
+  $dateTime = new DateTime($dtm); 
+  return date_format($dateTime, 'M jS Y');
+}
+
 ?>
