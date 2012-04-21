@@ -11,9 +11,10 @@ namespace WordPressStarterKit
         public AppConfig()
         {
             SiteAuthorName = "Site Author";
-            SiteURL = "http://blog.koenigweb.com/";
+            //SiteURL = @"http://blog.koenigweb.com/";
             //SiteURL = @"http://chriskoenig.net";
-            SiteTitle = "Chris' Blog!";
+            SiteURL = @"http://blog.koenigweb.com.dotnet-host.com";
+            SiteTitle = "Sample Wordpress Blog";
             SiteEmail = @"chris.koenig@microsoft.com";
             SiteAuthorBlogUserID = 0; // Default is likely 0, but not always
             categoryState = string.Empty;

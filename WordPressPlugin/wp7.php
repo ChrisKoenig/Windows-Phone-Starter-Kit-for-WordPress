@@ -16,12 +16,12 @@ Author URI: http://chriskoenig.net
 add_action('init', 'myPlugin_add_feed');
 
 function myPlugin_add_feed() {
-add_feed('categories', 'category_feed'); 
- add_feed('user_info', 'user_info_feed');
-add_feed('add_comment', 'add_comment_feed');
-add_feed('get_recent', 'load_recent_feed');
-add_feed('get_cat_feed', 'load_cat_feed');
-add_feed('get_comments_feed', 'load_guestb_by_id');
+  add_feed('categories', 'category_feed'); 
+  add_feed('user_info', 'user_info_feed');
+  add_feed('add_comment', 'add_comment_feed');
+  add_feed('get_recent', 'load_recent_feed');
+  add_feed('get_cat_feed', 'load_cat_feed');
+  add_feed('get_comments_feed', 'load_guestb_by_id');
 }
 
  
@@ -55,7 +55,7 @@ function load_guestb_by_id()
                                 <link><?php bloginfo_rss('url') ?></link>
                                 <atom:link href="<?php self_link() ?>" rel="self" type="application/rss+xml" />
                                 <description><?php bloginfo_rss("description") ?></description>
-                                <?php foreach( $comment_array as $post ){ ?>
+<?php foreach( $comment_array as $post ){ ?>
     <item>
       <title><?php $title= htmlspecialchars($post->comment_author); echo $title ?></title>
       <author><?php echo $post->comment_author; ?></author>
@@ -63,10 +63,9 @@ function load_guestb_by_id()
       <comment><?php  $comment = htmlspecialchars($post->comment_content); echo $comment; ?></comment>
     </item>
 <?php } ?>
-                </channel>
+  </channel>
 </rss><?php 
                 } 
- 
 //get recent post feed
 function load_recent_feed()
 { 
