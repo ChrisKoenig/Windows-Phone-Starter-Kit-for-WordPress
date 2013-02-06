@@ -22,7 +22,7 @@ namespace WordPressStarterKit.Networking
 
         public void GetRecentRss(Action<List<RSSFeedItem>, Exception> callback)
         {
-            var uri = new Uri(app.SiteURL + "?feed=get_recent");
+            var uri = new Uri(app.SiteURL + "?feed=get_recent&datetime=" + DateTime.Now.Ticks);
             ReadRss(uri, (results, ex) =>
                 {
                     callback(results, ex);
@@ -31,7 +31,7 @@ namespace WordPressStarterKit.Networking
 
         public void GetRssByCategory(string CategoryId, Action<List<RSSFeedItem>, Exception> callback)
         {
-            var uri = new Uri(String.Format("{0}?feed=get_cat_feed&cat_id={1}", app.SiteURL, CategoryId));
+            var uri = new Uri(String.Format("{0}?feed=get_cat_feed&cat_id={1}&datetime={2}", app.SiteURL, CategoryId, DateTime.Now.Ticks));
             ReadRss(uri, (results, ex) =>
                 {
                     callback(results, ex);
@@ -80,7 +80,7 @@ namespace WordPressStarterKit.Networking
         {
             callback.CheckNotNullThrowException();
 
-            var uri = new Uri(app.SiteURL + "?feed=categories");
+            var uri = new Uri(app.SiteURL + "?feed=categories&datetime=" + DateTime.Now.Ticks);
             network.GetStringFromURL(uri, (results, ex) =>
             {
                 if (ex != null)
