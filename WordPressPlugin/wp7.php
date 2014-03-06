@@ -201,7 +201,7 @@ function user_info_feed()
   }
   $current_user = get_userdata($user_id);    
   $gravatar = "http://www.gravatar.com/avatar/" . md5(strtolower($current_user->user_email));
-  $bio = $wpdb->get_var($wpdb->prepare("SELECT meta_value FROM wp_usermeta WHERE meta_key = 'description' AND wp_usermeta.user_id = " . $current_user->ID . ";"));
+  $bio = $wpdb->get_var($wpdb->prepare("SELECT meta_value FROM wp_usermeta WHERE meta_key = 'description' AND wp_usermeta.user_id = " . $current_user->ID . ";", null));
   //          echo "$current_user is"; 
   echo '<?xml version="1.0" encoding="UTF-8"?>';?>
 <UserInfo>
