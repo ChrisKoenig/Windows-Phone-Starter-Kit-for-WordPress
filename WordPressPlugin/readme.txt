@@ -2,8 +2,9 @@
 Contributors: Chris Koenig(Microsoft), Kirk Ballou(Touch Titans)
 Tags: rss, feed, custom
 Requires at least: 2.1
-Tested up to: 3.1.1
+Tested up to: 3.1.8
 Stable tag: 1.3
+Last Updated: 2014-03-06
 
 Adds feeds required for WP7 App usage
 
