@@ -19,10 +19,11 @@ This WordPress plugin will Adds feeds required for WP7 App usage
 2. Extract wp7.php
 3. Upload wp7.php to your wp-content/plugins directory
 4. Log in to your WordPress blog
-5. Click on "Plugins"¬ù
-6. Locate the "WP7 Feeds"¬ù plugin and click "Activate"
+5. Click on "Plugins"ù
+6. Locate the "WP7 Feeds"ù plugin and click "Activate"
 
 
 == Frequently Asked Questions ==
+
 
 
