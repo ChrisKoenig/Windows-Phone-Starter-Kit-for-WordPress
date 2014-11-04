@@ -8,16 +8,26 @@
 //
 //
 using System;
+using System.Net;
 
 namespace WordPressStarterKit.Models
 {
     public class RSSFeedItem
     {
-        public string Title { get; set; }
+        private string _title;
+        public string Title
+        {
+            get { return _title; }
+            set { _title = HttpUtility.HtmlDecode(value); }
+        }
 
         public string Author { get; set; }
 
-        public string Description { get; set; }
+        private string _description;
+        public string Description {
+            get { return _description; }
+            set { _description = HttpUtility.HtmlDecode(value); }
+        }
 
         public string Tags { get; set; }
 

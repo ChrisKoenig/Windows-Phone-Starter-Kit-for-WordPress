@@ -50,7 +50,7 @@ namespace WordPressStarterKit.Networking
                         return;
                     }
 
-                    var xdoc = XDocument.Parse(results);
+                    var xdoc = XDocument.Parse(results.Trim());
                     List<RSSFeedItem> RSSFeedItems = (from item in xdoc.Descendants("item")
                                                       select new RSSFeedItem()
                                                       {
@@ -86,7 +86,7 @@ namespace WordPressStarterKit.Networking
                 if (ex != null)
                     callback(null, ex);
 
-                XDocument xdoc = XDocument.Parse(results);
+                XDocument xdoc = XDocument.Parse(results.Trim());
                 List<CatFeedItem> catFeedItems = (from item in xdoc.Descendants("item")
                                                   select new CatFeedItem()
                                                   {
@@ -111,7 +111,7 @@ namespace WordPressStarterKit.Networking
                         return;
                     }
 
-                    XDocument xdoc = XDocument.Parse(results);
+                    XDocument xdoc = XDocument.Parse(results.Trim());
                     List<UserInfo> blogInfo = (from item in xdoc.Descendants("UserInfo")
                                                select new UserInfo()
                                                {
@@ -135,7 +135,7 @@ namespace WordPressStarterKit.Networking
                 if (ex != null)
                     callback(null, ex);
 
-                XDocument xdoc = XDocument.Parse(results);
+                XDocument xdoc = XDocument.Parse(results.Trim());
 
                 List<RSSCommentItem> rssCommentItems = (from item in xdoc.Descendants("item")
                                                         select new RSSCommentItem()
